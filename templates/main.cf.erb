@@ -1,0 +1,81 @@
+# global setup
+
+myorigin = /etc/mailname
+myhostname = <%= @hostname %>
+<%- if @virtual -%>
+mydestination = localhost
+<%- end -%>
+mynetworks = <%= @networks.join(', ') %>
+relayhost =
+
+# Local delivery
+biff = no
+append_dot_domain = no
+mailbox_size_limit = 0
+recipient_delimiter = +
+home_mailbox = Maildir/
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+
+# SMTP
+inet_interfaces = all
+smtpd_banner = $myhostname ESMTP server ready.
+
+# Filtering
+smtpd_client_restrictions =
+    permit_mynetworks
+    permit_sasl_authenticated
+
+smtpd_sender_restrictions = reject_unknown_sender_domain
+
+smtpd_relay_restrictions =
+    permit_mynetworks
+    permit_sasl_authenticated
+    reject_unauth_destination
+
+# All restrictions are added already to client check
+# smtpd_recipient_restrictions =
+#     permit_mynetworks
+#     permit_sasl_authenticated
+
+smtpd_data_restrictions = reject_unauth_pipelining
+
+# Postscreen
+postscreen_dnsbl_sites bl.spamcop.net zen.spamhaus.org
+postscreen_dnsbl_action enforce
+
+# TLS
+<%- if @ssl -%>
+smtpd_use_tls = yes
+smtpd_tls_cert_file = /etc/postfix/smtpd.cert
+smtpd_tls_key_file = /etc/postfix/smtpd.key
+<%- else -%>
+smtpd_use_tls = no
+<%- end -%>
+
+# SASL
+<%- if @sasl -%>
+smtpd_sasl_auth_enable = yes
+broken_sasl_auth_clients = yes
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/auth
+<%- else -%>
+smtpd_sasl_auth_enable = no
+<%- end -%>
+
+<%- if @virtual -%>
+# Virtual users
+<%= @virtual %>_destination_recipient_limit = 1
+<%= @virtual %>_destination_concurrency_limit = 1
+virtual_transport = <%= @virtual %>
+virtual_alias_domains =
+virtual_alias_maps =
+    mysql:/etc/postfix/mysql/forwardings.cf
+    mysql:/etc/postfix/mysql/email2email.cf
+    mysql:/etc/postfix/mysql/domain_forwardings.cf
+virtual_mailbox_domains = mysql:/etc/postfix/mysql/domains.cf
+virtual_mailbox_maps = mysql:/etc/postfix/mysql/mailboxes.cf
+virtual_mailbox_base = <%= @virtual_homes %>
+virtual_uid_maps = static:<%= @virtual_uid %>
+virtual_gid_maps = static:<%= @virtual_gid %>
+<%- end -%>
