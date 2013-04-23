@@ -1,0 +1,5 @@
+user = <%= @dbuser %>
+password = <%= @dbpass %>
+hosts = <%= @dbhost %>
+dbname = <%= @dbname %>
+query = SELECT 'virtual' from `<%= @domains_table %>` WHERE `<%= @domains_domain %>`='%s'

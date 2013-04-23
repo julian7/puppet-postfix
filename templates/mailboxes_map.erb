@@ -1,0 +1,5 @@
+user = <%= @dbuser %>
+password = <%= @dbpass %>
+hosts = <%= @dbhost %>
+dbname = <%= @dbname %>
+query = SELECT CONCAT(`<%= @users_domain %>`, '/', `<%= @users_user %>`, '/') FROM `<%= @users_table %>` WHERE `<%= @users_user %>`='%u' AND `<%= @users_domain %>`='%d'

@@ -1,0 +1,5 @@
+user = <%= @dbuser %>
+password = <%= @dbpass %>
+hosts = <%= @dbhost %>
+dbname = <%= @dbname %>
+query = SELECT `<%= @aliases_destination %>` FROM `<%= @aliases_table %>` WHERE `<%= @aliases_local %>`='' AND `<%= @aliases_domain %>`=SUBSTRING_INDEX('%s', '@', -1)
