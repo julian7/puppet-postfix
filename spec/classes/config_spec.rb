@@ -2,6 +2,12 @@ require 'spec_helper'
 
 describe 'postfix::config' do
   context do
+    let(:facts) {{fqdn: 'example.com'}}
+
+    it "doesn't contain /etc/postfix/maps" do
+      should contain_file('/etc/postfix/maps').with_ensure('absent')
+    end
+
     it 'generates main.cf' do
       should contain_file('/etc/postfix/main.cf').with(
         owner: 'root',
@@ -28,6 +34,10 @@ describe 'postfix::config' do
         without_content(%r{^127.0.0.1:10025\s+inet\s.+\ssmtpd$\s+
                         -o\scontent_filter=$\s}x)
     end
+
+    it 'does not generate virt map files' do
+      should contain_file('/etc/postfix/maps').with_ensure('absent')
+    end
   end
 
   context 'with content_filter,' do
@@ -40,6 +50,10 @@ describe 'postfix::config' do
         with_content(%r{^cfilter\s+unix\s.+\blmtp$}).
         with_content(%r{^127.0.0.1:10025\s+inet\s.+\ssmtpd$\s+
                      -o\scontent_filter=$\s}x)
+    end
+
+    it "doesn't contain /etc/postfix/maps" do
+      should contain_file('/etc/postfix/maps').with_ensure('absent')
     end
   end
 
@@ -55,7 +69,7 @@ describe 'postfix::config' do
     } }
 
     it 'generates main.cf with virtual user lookup' do
-      mpath = 'mysql:/etc/postfix/mysql/'
+      mpath = 'mysql:/etc/postfix/maps/'
       should contain_file('/etc/postfix/main.cf').
         with_content(%r{^virtengine_destination_recipient_limit = 1$}).
         with_content(%r{^virtengine_destination_concurrency_limit = 1$}).
@@ -77,6 +91,13 @@ describe 'postfix::config' do
                      flags=DRhu\suser=virtuser:virtgroup\sargv=/path/to/lda\s+
                      virtual\slda\sparams$}x)
     end
+
+    it 'generates virtual maps files' do
+      should contain_file('/etc/postfix/maps').with(
+        ensure: 'directory',
+        mode: '0750'
+      )
+    end
   end
 
   context 'when absent' do
@@ -84,6 +105,7 @@ describe 'postfix::config' do
     it do
       should contain_file('/etc/postfix/main.cf').with_ensure('absent')
       should contain_file('/etc/postfix/master.cf').with_ensure('absent')
+      should contain_file('/etc/postfix/maps').with_ensure('absent')
     end
   end
 end

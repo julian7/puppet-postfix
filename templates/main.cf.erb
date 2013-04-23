@@ -70,11 +70,11 @@ smtpd_sasl_auth_enable = no
 virtual_transport = <%= @virtual %>
 virtual_alias_domains =
 virtual_alias_maps =
-    mysql:/etc/postfix/mysql/forwardings.cf
-    mysql:/etc/postfix/mysql/email2email.cf
-    mysql:/etc/postfix/mysql/domain_forwardings.cf
-virtual_mailbox_domains = mysql:/etc/postfix/mysql/domains.cf
-virtual_mailbox_maps = mysql:/etc/postfix/mysql/mailboxes.cf
+    mysql:<%= @maps %>/forwardings.cf
+    mysql:<%= @maps %>/email2email.cf
+    mysql:<%= @maps %>/domain_forwardings.cf
+virtual_mailbox_domains = mysql:<%= @maps %>/domains.cf
+virtual_mailbox_maps = mysql:<%= @maps %>/mailboxes.cf
 virtual_mailbox_base = <%= @virtual_homes %>
 virtual_uid_maps = static:<%= @virtual_uid %>
 virtual_gid_maps = static:<%= @virtual_gid %>

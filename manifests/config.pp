@@ -29,4 +29,20 @@ class postfix::config(
       content => template('postfix/main.cf.erb')
       ;
   }
+  $virtfile = $virtual ? {
+    undef   => 'absent',
+    default => 'present'
+  }
+  $virtdir = $virtual ? {
+    undef   => 'absent',
+    default => $ensure ? {
+      'absent' => 'absent',
+      default  => 'directory'
+    }
+  }
+  file {
+    "/etc/postfix/maps":
+      ensure => $virtdir,
+      mode   => '0750'
+  }
 }
