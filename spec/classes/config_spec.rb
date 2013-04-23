@@ -35,6 +35,15 @@ describe 'postfix::config' do
                         -o\scontent_filter=$\s}x)
     end
 
+    it 'generates mailname' do
+      should contain_file('/etc/mailname').with(
+        owner: 'root',
+        group: 'postfix',
+        mode: '0644',
+        content: "example.com\n"
+      )
+    end
+
     it 'does not generate virt map files' do
       should contain_file('/etc/postfix/maps').with_ensure('absent')
     end

@@ -21,6 +21,11 @@ class postfix::config(
   }
 
   file {
+    "/etc/mailname":
+      ensure  => $ensure,
+      mode    => '0644',
+      content => "${::fqdn}\n",
+      ;
     "${postfix::conf}/master.cf":
       ensure  => $ensure,
       content => template('postfix/master.cf.erb')
