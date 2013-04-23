@@ -1,6 +1,7 @@
 class postfix::config(
   $ensure = 'present',
   $ssl = true,
+  $sasl = undef,
   $hostname = 'mailhost',
   $networks = ['127.0.0.0/8'],
   $content_filter = undef,

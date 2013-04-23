@@ -15,7 +15,8 @@ describe 'postfix::config' do
         mode:  '0640'
       ).
         with_content(%r{^myhostname = mailhost$}).
-        with_content(%r{^mynetworks = 127.0.0.0/8$})
+        with_content(%r{^mynetworks = 127.0.0.0/8$}).
+        with_content(%r{^smtpd_sasl_auth_enable = no$})
     end
 
     it 'generates master.cf' do
@@ -106,6 +107,17 @@ describe 'postfix::config' do
         ensure: 'directory',
         mode: '0750'
       )
+    end
+  end
+
+  context 'when sasl set' do
+    let(:params) {{sasl: 'sasl_provider'}}
+    it do
+      should contain_file('/etc/postfix/main.cf').
+        with_content(%r{^smtpd_sasl_auth_enable = yes$}).
+        with_content(%r{^broken_sasl_auth_clients = yes$}).
+        with_content(%r{^smtpd_sasl_type = sasl_provider$}).
+        with_content(%r{^smtpd_sasl_path = private/auth$})
     end
   end
 
