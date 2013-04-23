@@ -16,6 +16,9 @@ describe 'postfix::config' do
       ).
         with_content(%r{^myhostname = mailhost$}).
         with_content(%r{^mynetworks = 127.0.0.0/8$}).
+        with_content(%r{^smtpd_use_tls = yes$}).
+        with_content(%r{^smtpd_tls_cert_file = /etc/postfix/smtpd.cert$}).
+        with_content(%r{^smtpd_tls_key_file = /etc/postfix/smtpd.key$}).
         with_content(%r{^smtpd_sasl_auth_enable = no$})
     end
 
@@ -110,6 +113,15 @@ describe 'postfix::config' do
     end
   end
 
+  context 'when ssl not set' do
+    let(:params) {{ssl: false}}
+
+    it do
+      should contain_file('/etc/postfix/main.cf').
+        with_content(%r{^smtpd_use_tls = no$})
+    end
+  end
+
   context 'when sasl set' do
     let(:params) {{sasl: 'sasl_provider'}}
     it do
@@ -130,4 +142,3 @@ describe 'postfix::config' do
     end
   end
 end
-
