@@ -26,7 +26,9 @@ describe 'postfix::maps' do
     should contain_file('/etc/postfix/maps/domain_forwardings.cf').with(
       owner: 'root',
       group: 'postfix',
-      mode: '0640'
+      mode: '0640',
+      require: ['Package[postfix-mysql]', 'Class[Postfix::Config]'],
+      notify: 'Class[Postfix::Service]'
     ).
       with_content(%r{^user = dbuser$}).
       with_content(%r{^password = dbpass$}).
@@ -40,7 +42,9 @@ describe 'postfix::maps' do
     should contain_file('/etc/postfix/maps/domains.cf').with(
       owner: 'root',
       group: 'postfix',
-      mode: '0640'
+      mode: '0640',
+      require: ['Package[postfix-mysql]', 'Class[Postfix::Config]'],
+      notify: 'Class[Postfix::Service]'
     ).
       with_content(%r{^user = dbuser$}).
       with_content(%r{^password = dbpass$}).
@@ -53,7 +57,9 @@ describe 'postfix::maps' do
     should contain_file('/etc/postfix/maps/email2email.cf').with(
       owner: 'root',
       group: 'postfix',
-      mode: '0640'
+      mode: '0640',
+      require: ['Package[postfix-mysql]', 'Class[Postfix::Config]'],
+      notify: 'Class[Postfix::Service]'
     ).
       with_content(%r{^user = dbuser$}).
       with_content(%r{^password = dbpass$}).
@@ -67,7 +73,9 @@ describe 'postfix::maps' do
     should contain_file('/etc/postfix/maps/forwardings.cf').with(
       owner: 'root',
       group: 'postfix',
-      mode: '0640'
+      mode: '0640',
+      require: ['Package[postfix-mysql]', 'Class[Postfix::Config]'],
+      notify: 'Class[Postfix::Service]'
     ).
       with_content(%r{^user = dbuser$}).
       with_content(%r{^password = dbpass$}).
@@ -81,7 +89,9 @@ describe 'postfix::maps' do
     should contain_file('/etc/postfix/maps/mailboxes.cf').with(
       owner: 'root',
       group: 'postfix',
-      mode: '0640'
+      mode: '0640',
+      require: ['Package[postfix-mysql]', 'Class[Postfix::Config]'],
+      notify: 'Class[Postfix::Service]'
     ).
       with_content(%r{^user = dbuser$}).
       with_content(%r{^password = dbpass$}).

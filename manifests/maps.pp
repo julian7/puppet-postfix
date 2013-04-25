@@ -19,9 +19,11 @@ class postfix::maps(
 
   File {
     ensure  => $ensure,
-    owner => 'root',
-    group => 'postfix',
-    mode  => '0640'
+    owner   => 'root',
+    group   => 'postfix',
+    mode    => '0640',
+    require => [Package['postfix-mysql'], Class['postfix::config']],
+    notify  => Class['postfix::service']
   }
 
   file {
