@@ -41,8 +41,8 @@ smtpd_relay_restrictions =
 smtpd_data_restrictions = reject_unauth_pipelining
 
 # Postscreen
-postscreen_dnsbl_sites bl.spamcop.net zen.spamhaus.org
-postscreen_dnsbl_action enforce
+postscreen_dnsbl_sites = bl.spamcop.net zen.spamhaus.org
+postscreen_dnsbl_action = enforce
 
 # TLS
 <%- if @ssl -%>
