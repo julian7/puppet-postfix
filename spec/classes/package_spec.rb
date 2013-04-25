@@ -10,4 +10,10 @@ describe 'postfix::package' do
 
     it { should contain_package('postfix').with(ensure: 'latest') }
   end
+
+  context 'with mysql: true' do
+    let(:params) {{mysql: true, ensure: 'ensure'}}
+
+    it { should contain_package('postfix-mysql').with_ensure('ensure') }
+  end
 end

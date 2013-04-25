@@ -1,7 +1,7 @@
 class postfix::package($ensure = 'present', $mysql = false) {
-  $packages = ['postfix']
-  if $mysql == true {
-    $packages += 'postfix-mysql'
+  $packages = $mysql ? {
+    true  => ['postfix', 'postfix-mysql'],
+    false => 'postfix'
   }
   package {$packages:
     ensure => $ensure
