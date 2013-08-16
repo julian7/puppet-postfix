@@ -18,14 +18,13 @@ class postfix::config(
     ensure => $ensure,
     owner  => 'root',
     group  => 'postfix',
-    mode   => '0640',
+    mode   => '0644',
     notify => Class['postfix::service']
   }
 
   file {
     "/etc/mailname":
       ensure  => $ensure,
-      mode    => '0644',
       content => "${::fqdn}\n",
       ;
     "${postfix::conf}/master.cf":

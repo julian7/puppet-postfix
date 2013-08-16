@@ -12,7 +12,7 @@ describe 'postfix::config' do
       should contain_file('/etc/postfix/main.cf').with(
         owner: 'root',
         group: 'postfix',
-        mode:  '0640'
+        mode:  '0644'
       ).
         with_content(%r{^myhostname = mailhost$}).
         with_content(%r{^mynetworks = 127.0.0.0/8$}).
@@ -26,7 +26,7 @@ describe 'postfix::config' do
       should contain_file('/etc/postfix/master.cf').with(
         owner: 'root',
         group: 'postfix',
-        mode:  '0640'
+        mode:  '0644'
       ).
         with_content(%r{^smtp\s+inet\s.+\bpostscreen$}).
         with_content(%r{^smtpd\s+pass\s.+\bsmtpd$}).
