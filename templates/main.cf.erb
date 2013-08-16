@@ -10,7 +10,7 @@ relayhost =
 
 # Local delivery
 biff = no
-append_dot_domain = no
+#append_dot_domain = no
 mailbox_size_limit = 0
 recipient_delimiter = +
 home_mailbox = Maildir/
@@ -28,10 +28,10 @@ smtpd_client_restrictions =
 
 smtpd_sender_restrictions = reject_unknown_sender_domain
 
-smtpd_relay_restrictions =
-    permit_mynetworks
-    permit_sasl_authenticated
-    reject_unauth_destination
+# smtpd_relay_restrictions =
+#     permit_mynetworks
+#     permit_sasl_authenticated
+#     reject_unauth_destination
 
 # All restrictions are added already to client check
 # smtpd_recipient_restrictions =
@@ -47,8 +47,8 @@ postscreen_dnsbl_action = enforce
 # TLS
 <%- if @ssl -%>
 smtpd_use_tls = yes
-smtpd_tls_cert_file = /etc/postfix/smtpd.cert
-smtpd_tls_key_file = /etc/postfix/smtpd.key
+smtpd_tls_cert_file = /etc/ssl/certs/<%= @ssl %>.pem
+smtpd_tls_key_file = /etc/ssl/private/<%= @ssl %>.key
 <%- else -%>
 smtpd_use_tls = no
 <%- end -%>
