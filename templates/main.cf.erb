@@ -2,6 +2,9 @@
 
 myorigin = /etc/mailname
 myhostname = <%= @hostname %>
+<%- if @proxy_host -%>
+proxy_host = <%= @proxy_host %>
+<%- end -%>
 <%- if @virtual -%>
 mydestination = localhost
 <%- end -%>
@@ -28,15 +31,17 @@ smtpd_client_restrictions =
 
 smtpd_sender_restrictions = reject_unknown_sender_domain
 
+# Once we upgrade to 2.10, smtpd_recipient_restrictions will move here
 # smtpd_relay_restrictions =
 #     permit_mynetworks
 #     permit_sasl_authenticated
 #     reject_unauth_destination
 
 # All restrictions are added already to client check
-# smtpd_recipient_restrictions =
-#     permit_mynetworks
-#     permit_sasl_authenticated
+smtpd_recipient_restrictions =
+     permit_mynetworks
+     permit_sasl_authenticated
+     reject_unauth_destination
 
 smtpd_data_restrictions = reject_unauth_pipelining
 

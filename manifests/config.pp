@@ -2,6 +2,7 @@ class postfix::config(
   $ensure = 'present',
   $ssl = undef,
   $sasl = undef,
+  $proxy_host = undef,
   $hostname = 'mailhost',
   $networks = ['127.0.0.0/8'],
   $content_filter = undef,
@@ -25,7 +26,7 @@ class postfix::config(
   file {
     "/etc/mailname":
       ensure  => $ensure,
-      content => "${::fqdn}\n",
+      content => "${$hostname}\n",
       ;
     "${postfix::conf}/master.cf":
       ensure  => $ensure,
