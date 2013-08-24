@@ -2,7 +2,7 @@ class postfix::config(
   $ensure = 'present',
   $ssl = undef,
   $sasl = undef,
-  $proxy_host = undef,
+  $proxy_interfaces = undef,
   $hostname = 'mailhost',
   $networks = ['127.0.0.0/8'],
   $content_filter = undef,
