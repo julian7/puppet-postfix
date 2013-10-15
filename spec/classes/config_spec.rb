@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe 'postfix::config' do
   context do
-    let(:facts) {{fqdn: 'example.com'}}
-
+    let(:params) {{hostname: 'example.com'}}
     it "doesn't contain /etc/postfix/maps" do
       should contain_file('/etc/postfix/maps').with_ensure('absent')
     end
@@ -14,11 +13,9 @@ describe 'postfix::config' do
         group: 'postfix',
         mode:  '0644'
       ).
-        with_content(%r{^myhostname = mailhost$}).
-        with_content(%r{^mynetworks = 127.0.0.0/8$}).
-        with_content(%r{^smtpd_use_tls = yes$}).
-        with_content(%r{^smtpd_tls_cert_file = /etc/postfix/smtpd.cert$}).
-        with_content(%r{^smtpd_tls_key_file = /etc/postfix/smtpd.key$}).
+        with_content(%r{^myhostname = example\.com$}).
+        with_content(%r{^mynetworks = 127\.0\.0\.0/8$}).
+        with_content(%r{^smtpd_use_tls = no$}).
         with_content(%r{^smtpd_sasl_auth_enable = no$})
     end
 
@@ -70,6 +67,41 @@ describe 'postfix::config' do
     end
   end
 
+  context 'with spf,' do
+    let(:params) { { spf_helo: 'helo', spf_from: 'from', spf_skip: ['skip'] } }
+    let(:pre_condition) { "class {postfix: spf => true }" }
+
+    it 'adds spf-specific settings to main.cf' do
+      should contain_file('/etc/postfix/main.cf').
+        with_content(%r{^policy-spf_time_limit = 3600s$}).
+        with_content(%r{^smtpd_recipient_restrictions\s*=[^=]+
+                     check_policy_service\sunix:private/policy-spf}x)
+    end
+
+    it 'adds spf-specific settings to master.cf' do
+      should contain_file('/etc/postfix/master.cf').
+        with_content(%r{policy-spf\s+unix\s+-\s+n\s+n\s+-\s+-\s+spawn$\s+
+                     user=nobody\s+argv=/usr/bin/policyd-spf$}x)
+    end
+
+    it 'adds spf config' do
+      should contain_file('/etc/postfix-policyd-spf-python/policyd-spf.conf').
+        with(
+          owner: 'root',
+          group: 'root',
+          mode: '0644',
+          content: <<-EnD)
+debugLevel = 1
+defaultSeedOnly = 1
+HELO_reject = helo
+Mail_From_reject = from
+PermError_reject = False
+TempError_Defer = False
+skip_addresses = 127.0.0.0/8,::ffff:127.0.0.0//104,::1//128,skip
+EnD
+    end
+  end
+
   context 'with virtual users' do
     let(:params) { {
       virtual: 'virtengine',
@@ -113,12 +145,14 @@ describe 'postfix::config' do
     end
   end
 
-  context 'when ssl not set' do
-    let(:params) {{ssl: false}}
+  context 'when ssl is set' do
+    let(:params) {{ssl: 'sslkey'}}
 
     it do
       should contain_file('/etc/postfix/main.cf').
-        with_content(%r{^smtpd_use_tls = no$})
+        with_content(%r{^smtpd_use_tls = yes$}).
+        with_content(%r{^smtpd_tls_cert_file = /etc/ssl/certs/sslkey.pem$}).
+        with_content(%r{^smtpd_tls_key_file = /etc/ssl/private/sslkey.key$})
     end
   end
 

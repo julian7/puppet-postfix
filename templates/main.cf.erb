@@ -43,12 +43,20 @@ smtpd_recipient_restrictions =
      permit_mynetworks
      permit_sasl_authenticated
      reject_unauth_destination
+<%- if @spf -%>
+     check_policy_service unix:private/policy-spf
+<%- end -%>
 
 smtpd_data_restrictions = reject_unauth_pipelining
 
 # Postscreen
 postscreen_dnsbl_sites = bl.spamcop.net zen.spamhaus.org
 postscreen_dnsbl_action = enforce
+
+<%- if @spf -%>
+# SPF
+policy-spf_time_limit = 3600s
+<%- end -%>
 
 # TLS
 <%- if @ssl -%>

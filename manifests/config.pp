@@ -6,6 +6,9 @@ class postfix::config(
   $hostname = 'mailhost',
   $networks = ['127.0.0.0/8'],
   $content_filter = undef,
+  $spf_helo = "SPF_Not_Pass",
+  $spf_from = "Fail",
+  $spf_skip = [],
   $virtual = undef,
   $virtual_homes = '/srv/mailboxes',
   $virtual_usergroup = 'vmail:vmail',
@@ -14,6 +17,20 @@ class postfix::config(
   $virtual_lda = '/usr/lib/dovecot/dovecot-lda',
   $virtual_lda_params = "-f \${sender} -d \${user}@\${nexthop} -m \${extension}" #" fix for syntax highlighter
   ) inherits postfix {
+
+  $spf = $postfix::spf
+  $spf_full_skip = [[
+    '127.0.0.0/8',
+    '::ffff:127.0.0.0//104',
+    '::1//128'
+  ], $spf_skip ]
+
+  $directory = $ensure ? {
+    'absent' => 'absent',
+    default  => 'directory'
+  }
+  $virtfile = $virtual ? { undef => 'absent', default => $ensure }
+  $virtdir = $virtual ? { undef => 'absent', default => $directory }
 
   File {
     ensure => $ensure,
@@ -25,31 +42,27 @@ class postfix::config(
 
   file {
     "/etc/mailname":
-      ensure  => $ensure,
       content => "${$hostname}\n",
       ;
     "${postfix::conf}/master.cf":
-      ensure  => $ensure,
       content => template('postfix/master.cf.erb')
       ;
     "${postfix::conf}/main.cf":
       content => template('postfix/main.cf.erb')
       ;
-  }
-  $virtfile = $virtual ? {
-    undef   => 'absent',
-    default => 'present'
-  }
-  $virtdir = $virtual ? {
-    undef   => 'absent',
-    default => $ensure ? {
-      'absent' => 'absent',
-      default  => 'directory'
-    }
-  }
-  file {
     "/etc/postfix/maps":
       ensure => $virtdir,
       mode   => '0750'
+      ;
+    "/etc/postfix-policyd-spf-python":
+      ensure => $spf ? { true => $directory, default => 'default' },
+      group  => 'root',
+      mode   => '0755'
+      ;
+    "/etc/postfix-policyd-spf-python/policyd-spf.conf":
+      ensure  => $spf ? { true => $ensure, default => 'default' },
+      group   => 'root',
+      content => template('postfix/policyd-spf-python.conf.erb')
+      ;
   }
 }

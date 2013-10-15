@@ -1,9 +1,9 @@
-class postfix::package($ensure = 'present', $mysql = false) {
-  $packages = $mysql ? {
-    true  => ['postfix', 'postfix-mysql'],
-    false => 'postfix'
+class postfix::package($ensure = 'present', $mysql = false, $spf = false) {
+  package {'postfix': ensure => $ensure }
+  package {'postfix-mysql':
+    ensure => $mysql ? { true => $ensure, default => 'absent' }
   }
-  package {$packages:
-    ensure => $ensure
+  package {'postfix-policyd-spf-python':
+    ensure => $spf ? { true => $ensure, default => 'absent' }
   }
 }

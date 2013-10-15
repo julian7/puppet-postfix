@@ -1,0 +1,7 @@
+debugLevel = 1
+defaultSeedOnly = 1
+HELO_reject = <%= @spf_helo %>
+Mail_From_reject = <%= @spf_from %>
+PermError_reject = False
+TempError_Defer = False
+skip_addresses = <%= @spf_full_skip.flatten.join(',') %>
