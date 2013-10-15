@@ -10,7 +10,7 @@ GEM
   specs:
     coderay (1.0.9)
     diff-lcs (1.2.4)
-    facter (1.7.0)
+    facter (1.7.3)
     ffi (1.7.0)
     formatador (0.2.4)
     guard (1.8.0)
@@ -24,7 +24,7 @@ GEM
       rspec (~> 2.11)
     hiera (1.2.1)
       json_pure
-    json_pure (1.7.7)
+    json_pure (1.8.0)
     listen (1.0.2)
       rb-fsevent (>= 0.9.3)
       rb-inotify (>= 0.9)
@@ -35,14 +35,16 @@ GEM
       coderay (~> 1.0.5)
       method_source (~> 0.8)
       slop (~> 3.4)
-    puppet (3.1.1)
+    puppet (3.3.1)
       facter (~> 1.6)
       hiera (~> 1.0)
+      rgen (~> 0.6.5)
     rb-fsevent (0.9.3)
     rb-inotify (0.9.0)
       ffi (>= 0.5.0)
     rb-kqueue (0.2.0)
       ffi (>= 0.5.0)
+    rgen (0.6.6)
     rspec (2.13.0)
       rspec-core (~> 2.13.0)
       rspec-expectations (~> 2.13.0)
@@ -59,5 +61,5 @@ PLATFORMS
 
 DEPENDENCIES
   guard-rspec
-  puppet (~> 3.1.1)
+  puppet (~> 3.3.1)
   rspec-puppet!
