@@ -107,10 +107,8 @@ EnD
       virtual: 'virtengine',
       virtual_homes: '/path/to/mailboxes',
       virtual_usergroup: 'virtuser:virtgroup',
-      virtual_uid: '94779',
-      virtual_gid: '39179',
-      virtual_lda: '/path/to/lda',
-      virtual_lda_params: 'virtual lda params'
+      virtual_uid: '94',
+      virtual_gid: '39'
     } }
 
     it 'generates main.cf with virtual user lookup' do
@@ -118,23 +116,16 @@ EnD
       should contain_file('/etc/postfix/main.cf').
         with_content(%r{^virtengine_destination_recipient_limit = 1$}).
         with_content(%r{^virtengine_destination_concurrency_limit = 1$}).
-        with_content(%r{^virtual_transport = virtengine$}).
+        with_content(%r{^virtual_minimum_uid = 94$}).
         with_content(%r{^virtual_mailbox_base = /path/to/mailboxes$}).
-        with_content(%r{^virtual_uid_maps = static:94779$}).
-        with_content(%r{^virtual_gid_maps = static:39179$}).
+        with_content(%r{^virtual_uid_maps = static:94$}).
+        with_content(%r{^virtual_gid_maps = static:39$}).
         with_content(%r{^virtual_alias_maps\s=\s+
                      #{mpath}forwardings.cf\s+
                      #{mpath}email2email.cf\s+
                      #{mpath}domain_forwardings.cf$}x).
         with_content(%r{^virtual_mailbox_domains = #{mpath}domains.cf$}).
         with_content(%r{^virtual_mailbox_maps = #{mpath}mailboxes.cf$})
-    end
-
-    it 'generates master.cf with virtual delivery agent' do
-      should contain_file('/etc/postfix/master.cf').
-        with_content(%r{^virtengine\s+unix\s.+\spipe\s+
-                     flags=DRhu\suser=virtuser:virtgroup\sargv=/path/to/lda\s+
-                     virtual\slda\sparams$}x)
     end
 
     it 'generates virtual maps files' do

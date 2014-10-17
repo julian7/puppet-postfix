@@ -14,8 +14,6 @@ class postfix::config(
   $virtual_usergroup = 'vmail:vmail',
   $virtual_uid = 90,
   $virtual_gid = 90,
-  $virtual_lda = '/usr/lib/dovecot/dovecot-lda',
-  $virtual_lda_params = "-f \${sender} -d \${user}@\${nexthop} -m \${extension}" #" fix for syntax highlighter
   ) inherits postfix {
 
   $spf = $postfix::spf

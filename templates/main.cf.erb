@@ -81,7 +81,9 @@ smtpd_sasl_auth_enable = no
 # Virtual users
 <%= @virtual %>_destination_recipient_limit = 1
 <%= @virtual %>_destination_concurrency_limit = 1
-virtual_transport = <%= @virtual %>
+<%- if @virtual_uid.to_i < 100 -%>
+virtual_minimum_uid = <%= @virtual_uid %>
+<%- end -%>
 virtual_alias_domains =
 virtual_alias_maps =
     mysql:<%= @maps %>/forwardings.cf
